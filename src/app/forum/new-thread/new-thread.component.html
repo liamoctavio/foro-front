@@ -1,0 +1,44 @@
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Crear Nuevo Tema</h2>
+
+    <form [formGroup]="threadForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+            <label>Categoría</label>
+            <select class="form-select" formControlName="categoryId">
+                <option value="">Seleccionar categoría</option>
+                <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+            </select>
+            <div class="text-danger" *ngIf="submitted && threadForm.controls['categoryId'].errors?.['required']">
+                Selecciona una categoría.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Título</label>
+            <input type="text" class="form-control" formControlName="title">
+            <div class="text-danger" *ngIf="submitted && threadForm.controls['title'].errors">
+                <small *ngIf="threadForm.controls['title'].errors?.['required']">El título es obligatorio.</small>
+                <small *ngIf="threadForm.controls['title'].errors?.['minlength']">Debe tener al menos 5
+                    caracteres.</small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>Contenido</label>
+            <textarea rows="5" class="form-control" formControlName="content"></textarea>
+            <div class="text-danger" *ngIf="submitted && threadForm.controls['content'].errors">
+                <small *ngIf="threadForm.controls['content'].errors?.['required']">El contenido es obligatorio.</small>
+                <small *ngIf="threadForm.controls['content'].errors?.['minlength']">Debe tener al menos 10
+                    caracteres.</small>
+            </div>
+        </div>
+
+        <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+        <button type="submit" class="btn btn-success w-100">Publicar</button>
+    </form>
+
+    <div *ngIf="!user" class="alert alert-warning mt-3 text-center">
+        Debes <a routerLink="/login">iniciar sesión</a> para publicar un tema.
+    </div>
+</div>

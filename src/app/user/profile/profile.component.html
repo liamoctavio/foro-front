@@ -1,1 +1,42 @@
-<p>profile works!</p>
+<div class="container mt-5" *ngIf="user">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Modificar Perfil</h2>
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                    <label>Nombre</label>
+                    <input type="text" class="form-control" formControlName="name">
+                    <div class="text-danger" *ngIf="submitted && profileForm.controls['name'].errors?.['required']">
+                        El nombre es obligatorio.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label>Nueva Contraseña (opcional)</label>
+                    <input type="password" class="form-control" formControlName="password">
+                    <div class="text-danger" *ngIf="submitted && profileForm.controls['password'].errors">
+                        <small *ngIf="profileForm.controls['password'].errors?.['minlength']">Mínimo 8
+                            caracteres.</small>
+                        <small *ngIf="profileForm.controls['password'].errors?.['maxlength']">Máximo 16
+                            caracteres.</small>
+                        <small *ngIf="profileForm.controls['password'].errors?.['pattern']">Debe incluir mayúscula,
+                            minúscula, número y símbolo.</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label>Confirmar nueva contraseña</label>
+                    <input type="password" class="form-control" formControlName="confirmPassword">
+                    <div class="text-danger" *ngIf="submitted && profileForm.errors?.['mismatch']">
+                        Las contraseñas no coinciden.
+                    </div>
+                </div>
+
+                <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+                <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+                <button type="submit" class="btn btn-primary w-100">Actualizar Perfil</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,27 +1,83 @@
-# ForoFront
+# 🧵 Sistema de Foros - Proyecto FullStack Angular (Frontend)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.12.
+Este proyecto corresponde al desarrollo de un sistema de foros online, como parte de la evaluación final del módulo **Desarrollo Full Stack III**. Fue construido utilizando **Angular 17 en modo standalone** y simula funcionalidades completas de registro, autenticación, roles y gestión de contenido.
 
-## Development server
+---
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## 🎯 Objetivo
 
-## Code scaffolding
+Construir la interfaz web de un foro utilizando Angular y buenas prácticas empresariales:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Frontend modular, responsive y mantenible
+- Uso de `localStorage` para simular base de datos
+- Control de sesión y roles
+- Panel de administración exclusivo
 
-## Build
+---
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## 🛠️ Tecnologías y herramientas
 
-## Running unit tests
+- Angular 17 (standalone)
+- Bootstrap 5 (diseño responsive)
+- TypeScript
+- HTML + CSS
+- `localStorage` para persistencia simulada
+- Git para control de versiones
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+---
 
-## Running end-to-end tests
+## 👥 Tipos de usuario
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+| Rol           | Descripción                                                                      | Acceso                                           |
+| ------------- | -------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Usuario       | Puede registrarse, iniciar sesión, crear temas y comentar                        | Público                                          |
+| Administrador | Además de lo anterior, puede ver y gestionar todos los temas (banear o eliminar) | Solo visible si se registra como "Administrador" |
 
-## Further help
+---
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 🔐 Funcionalidades principales
+
+### Autenticación
+
+- Registro de usuario con validación estricta de contraseña
+- Roles: usuario y administrador
+- Inicio de sesión con persistencia (`localStorage`)
+- Modificación de perfil
+- Logout y control de sesión
+- Recuperar contraseña (pantalla simulada)
+
+### Foro
+
+- Lista de 5 categorías
+- Temas por categoría
+- Crear nuevo tema
+- Ver contenido del tema + comentarios
+- Comentar si está logueado
+- Ver advertencia si el tema fue baneado
+
+### Panel Administrador
+
+- Acceso exclusivo para usuarios con rol `admin`
+- Ver todos los temas
+- Banear (marcar como restringido) o eliminar temas
+
+---
+
+## 🚧 Seguridad y control de acceso
+
+- Rutas protegidas con `authGuard` y `adminGuard`
+- Navbar dinámico según sesión y rol
+- Acciones de foro y navegación condicionadas
+
+---
+
+## ▶️ Instrucciones para ejecutar
+
+1. Clona el repositorio o descomprime el `.zip`
+2. Abre la terminal en la carpeta del proyecto
+3. Ejecuta:
+
+```bash
+npm install
+ng serve
+```

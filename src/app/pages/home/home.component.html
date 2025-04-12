@@ -1,0 +1,9 @@
+<div class="container mt-5">
+    <h2 class="text-center">Bienvenido{{ user?.name ? ', ' + user.name : '' }} 👋</h2>
+    <p class="lead text-center">Explora las categorías del foro o crea un nuevo tema.</p>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+        <a class="btn btn-primary" routerLink="/categories">Ver Categorías</a>
+        <a class="btn btn-success" routerLink="/new-thread" *ngIf="user">Crear Tema</a>
+    </div>
+</div>

@@ -1,1 +1,41 @@
-<p>thread works!</p>
+<div class="container mt-5">
+    <h2>{{ thread.title }}</h2>
+    <p class="text-muted">Publicado por {{ thread.author }} el {{ thread.date }}</p>
+    <div *ngIf="thread.baneado" class="alert alert-danger">
+        Este tema ha sido baneado por un administrador. No se permiten nuevos comentarios.
+    </div>
+    <p>{{ thread.content }}</p>
+
+    <hr>
+
+    <h4>Comentarios</h4>
+
+    <div *ngIf="comments.length === 0" class="alert alert-light">
+        Aún no hay comentarios. ¡Sé el primero en opinar!
+    </div>
+
+    <ul class="list-group mb-4" *ngIf="comments.length > 0">
+        <li class="list-group-item" *ngFor="let c of comments">
+            <p class="mb-1">{{ c.content }}</p>
+            <small class="text-muted">Por {{ c.author }} el {{ c.date }}</small>
+        </li>
+    </ul>
+
+    <div *ngIf="user && !thread.baneado">
+        <h5>Agregar un comentario</h5>
+        <form [formGroup]="commentForm" (ngSubmit)="onComment()">
+            <div class="mb-3">
+                <textarea class="form-control" rows="3" formControlName="content"
+                    placeholder="Escribe tu comentario..."></textarea>
+                <div class="text-danger" *ngIf="commentForm.controls['content'].errors?.['required']">
+                    El comentario no puede estar vacío.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Publicar</button>
+        </form>
+    </div>
+
+    <div *ngIf="!user" class="alert alert-warning mt-4">
+        Debes <a routerLink="/login">iniciar sesión</a> para comentar.
+    </div>
+</div>
