@@ -4,8 +4,8 @@
         <div class="col-md-6 mb-4" *ngFor="let cat of categories">
             <div class="card h-100 shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">{{ cat.name }}</h5>
-                    <p class="card-text">{{ cat.description }}</p>
+                    <h5 class="card-title">{{ cat.nombre }}</h5>
+                    <!-- <p class="card-text">{{ cat.description }}</p> -->
                     <a [routerLink]="['/category', cat.id]" class="btn btn-primary">Ver temas</a>
                 </div>
             </div>

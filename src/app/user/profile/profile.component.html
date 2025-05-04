@@ -1,4 +1,4 @@
-<div class="container mt-5" *ngIf="user">
+<!-- <div class="container mt-5" *ngIf="user">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h2 class="text-center mb-4">Modificar Perfil</h2>
@@ -39,4 +39,33 @@
             </form>
         </div>
     </div>
+</div> -->
+
+<div class="container mt-5">
+    <h2>Editar Perfil</h2>
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" formControlName="nombre" class="form-control"
+                placeholder="Tu nuevo nombre" />
+            <div class="text-danger" *ngIf="submitted && profileForm.controls['nombre'].invalid">
+                El nombre es obligatorio.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="password">Nueva Contraseña</label>
+            <input type="password" id="password" formControlName="password" class="form-control"
+                placeholder="Dejar vacío si no desea cambiarla" />
+            <div class="text-danger" *ngIf="submitted && profileForm.controls['password'].errors?.['minlength']">
+                Debe tener al menos 6 caracteres.
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Actualizar</button>
+    </form>
+
+    <div *ngIf="success" class="alert alert-success mt-3">{{ success }}</div>
+    <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
 </div>

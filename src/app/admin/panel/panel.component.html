@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<!-- <div class="container mt-5">
     <h2 class="text-center mb-4">Panel de Administración</h2>
 
     <div *ngIf="temas.length === 0" class="alert alert-info text-center">
@@ -10,16 +10,15 @@
             <tr>
                 <th>Título</th>
                 <th>Autor</th>
-                <th>Fecha</th>
+                <th>Fecha_Creacion</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let tema of temas">
-                <td>{{ tema.title }}</td>
-                <td>{{ tema.author }}</td>
-                <td>{{ tema.date }}</td>
+                <td>{{ tema.titulo }}</td>
+                <td>{{ tema.usuario.email }}</td>
                 <td>
                     <span *ngIf="tema.baneado" class="text-danger fw-bold">BANEADO</span>
                     <span *ngIf="!tema.baneado">Activo</span>
@@ -35,4 +34,37 @@
             </tr>
         </tbody>
     </table>
+</div> -->
+
+<!-- src/app/admin/panel/panel.component.html -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Panel de Administración</h2>
+
+    <div *ngIf="loading" class="text-center">Cargando temas…</div>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <table class="table table-bordered table-hover" *ngIf="!loading && temas.length">
+        <thead class="table-dark">
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let tema of temas">
+                <td>{{ tema.titulo }}</td>
+                <td>{{ tema.usuario.email }}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" (click)="eliminarTema(tema.id)">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="!loading && temas.length === 0" class="alert alert-info text-center">
+        No hay temas publicados aún.
+    </div>
 </div>

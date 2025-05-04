@@ -7,6 +7,9 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { ThreadService } from '../../services/thread.service';
+import { Thread } from '../../models/thread.model';
+import { CategoryService, Category } from '../../services/category.service';
 
 @Component({
   selector: 'app-new-thread',
@@ -17,18 +20,17 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class NewThreadComponent implements OnInit {
   threadForm!: FormGroup;
-  categories = [
-    { id: 1, name: 'Tecnología' },
-    { id: 2, name: 'Educación' },
-    { id: 3, name: 'Cultura' },
-    { id: 4, name: 'Salud' },
-    { id: 5, name: 'Videojuegos' },
-  ];
+  categories: Category[] = [];
   user: any = null;
   submitted = false;
   success = '';
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private threadService: ThreadService,
+    private categoryService: CategoryService
+  ) {}
 
   ngOnInit(): void {
     const userData = localStorage.getItem('loggedUser');
@@ -39,6 +41,15 @@ export class NewThreadComponent implements OnInit {
       title: ['', [Validators.required, Validators.minLength(5)]],
       content: ['', [Validators.required, Validators.minLength(10)]],
     });
+
+    this.categoryService.getCategories().subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (err) => {
+        console.error('Error cargando categorías', err);
+      },
+    });
   }
 
   onSubmit() {
@@ -48,26 +59,27 @@ export class NewThreadComponent implements OnInit {
     if (this.threadForm.invalid || !this.user) return;
 
     const { categoryId, title, content } = this.threadForm.value;
-    const threads = JSON.parse(localStorage.getItem('threads') || '[]');
 
-    const newThread = {
-      id: Date.now(), // ID único simulado
-      categoryId: Number(categoryId),
-      title,
-      content,
-      author: this.user.email,
-      date: new Date().toISOString().slice(0, 10),
+    const nuevoTema = {
+      usuarioId: this.user.id,
+      categoriaId: Number(categoryId),
+      titulo: title,
+      contenido: content,
     };
 
-    threads.push(newThread);
-    localStorage.setItem('threads', JSON.stringify(threads));
+    this.threadService.crearTema(nuevoTema).subscribe({
+      next: () => {
+        this.success = 'Tema publicado con éxito. Redirigiendo...';
+        this.threadForm.reset();
+        this.submitted = false;
 
-    this.success = 'Tema publicado con éxito. Redirigiendo...';
-    this.threadForm.reset();
-    this.submitted = false;
-
-    setTimeout(() => {
-      this.router.navigate(['/category', categoryId]);
-    }, 2000);
+        setTimeout(() => {
+          this.router.navigate(['/category', categoryId]);
+        }, 2000);
+      },
+      error: (err) => {
+        console.error('Error al crear tema', err);
+      },
+    });
   }
 }

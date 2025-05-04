@@ -1,29 +1,11 @@
 <div class="container mt-5">
-    <h2 class="mb-4 text-center">Temas en {{ categoryName }}</h2>
-
-    <div *ngIf="threads.length === 0" class="alert alert-info text-center">
-        No hay temas en esta categoría.
-    </div>
-
+    <h2 class="text-center mb-4">Temas en {{ categoryName }}</h2>
     <div class="list-group">
-        <!-- <a class="list-group-item list-group-item-action" *ngFor="let t of threads" [routerLink]="['/thread', t.id]">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ t.title }}</h5>
-                <small>{{ t.date }}</small>
-            </div>
-            <p class="mb-1">Autor: {{ t.author }}</p>
-        </a> -->
-        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-            *ngFor="let t of threads" [routerLink]="['/thread', t.id]">
-            <div>
-                <h5 class="mb-1">{{ t.title }}</h5>
-                <p class="mb-1">Autor: {{ t.author }}</p>
-            </div>
-            <div class="text-end">
-                <small>{{ t.date }}</small><br>
-                <span *ngIf="t.baneado" class="badge bg-danger mt-1">Baneado</span>
-            </div>
+        <a *ngFor="let thread of threads" [routerLink]="['/thread', thread.id]"
+            class="list-group-item list-group-item-action">
+            <h5>{{ thread.titulo }}</h5>
+            <p>{{ thread.contenido }}</p>
+            <small>Publicado por {{ thread.usuario.nombre }}</small>
         </a>
-
     </div>
 </div>

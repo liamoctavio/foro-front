@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private usuarioService: UsuarioService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -38,40 +40,30 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    //   this.submitted = true;
-    //   if (this.loginForm.invalid) return;
-
-    //   const { email, password } = this.loginForm.value;
-
-    //   if (email === 'admin@foro.com' && password === 'Admin123!') {
-    //     alert('¡Login exitoso!');
-    //   } else {
-    //     this.error = 'Correo o contraseña incorrectos.';
-    //   }
-    // }
-
     this.submitted = true;
     this.error = '';
+    console.log('Formulario enviado');
 
-    if (this.loginForm.invalid) return;
-
-    const { email, password } = this.loginForm.value;
-
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-    const user = users.find(
-      (u: any) => u.email === email && u.password === password
-    );
-
-    if (!user) {
-      this.error = 'Correo o contraseña incorrectos.';
+    if (this.loginForm.invalid) {
+      console.log('Formulario inválido');
       return;
     }
+    const { email, password } = this.loginForm.value;
 
-    localStorage.setItem('loggedUser', JSON.stringify(user));
+    this.usuarioService.login(email, password).subscribe({
+      next: (usuario) => {
+        console.log('Login exitoso:', usuario);
 
-    alert(`¡Bienvenido, ${user.name}!`);
+        localStorage.setItem('loggedUser', JSON.stringify(usuario));
+        const authHeader = 'Basic ' + btoa(`${email}:${password}`);
+        localStorage.setItem('authHeader', authHeader);
 
-    this.router.navigate(['/home']);
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.error = 'Correo o contraseña incorrectos.';
+        console.error('Error en login:', err);
+      },
+    });
   }
 }

@@ -7,6 +7,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +22,11 @@ export class RegisterComponent {
   error = '';
   success = '';
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private usuarioService: UsuarioService
+  ) {
     this.registerForm = this.fb.group(
       {
         name: ['', Validators.required],
@@ -56,26 +61,29 @@ export class RegisterComponent {
     if (this.registerForm.invalid) return;
 
     const { name, email, password, role } = this.registerForm.value;
-    const normalizedEmail = email.trim().toLowerCase();
+    const nuevoUsuario = {
+      nombre: name,
+      email: email.trim().toLowerCase(),
+      password,
+      rol: role.toUpperCase(),
+    };
 
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-    const userExists = users.some(
-      (u: any) => u.email.toLowerCase() === normalizedEmail
-    );
-
-    if (userExists) {
-      this.error = 'El correo ya está registrado.';
-      return;
-    }
-
-    users.push({ name, email: normalizedEmail, password, role });
-    localStorage.setItem('users', JSON.stringify(users));
-
-    this.success = `Usuario ${name} registrado exitosamente`;
-
-    setTimeout(() => {
-      this.router.navigate(['/login']);
-    }, 2000);
+    this.usuarioService.register(nuevoUsuario).subscribe({
+      next: (res) => {
+        this.success = `Usuario ${res.nombre} registrado exitosamente`;
+        setTimeout(() => this.router.navigate(['/login']), 2000);
+      },
+      error: (err) => {
+        console.error(err);
+        console.log('Detalle del error:', err.error);
+        if (err.error?.message) {
+          this.error = err.error.message;
+        } else if (err.error?.error) {
+          this.error = err.error.error;
+        } else {
+          this.error = 'Error inesperado al registrar el usuario.';
+        }
+      },
+    });
   }
 }

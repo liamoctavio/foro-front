@@ -17,11 +17,11 @@ export class AppComponent {
 
   logout(): void {
     localStorage.removeItem('loggedUser');
-    location.reload(); // recarga para refrescar navbar
+    location.reload();
   }
 
   getUserRole(): string {
     const user = localStorage.getItem('loggedUser');
-    return user ? JSON.parse(user).role : '';
+    return user ? JSON.parse(user).rol?.toLowerCase() : '';
   }
 }

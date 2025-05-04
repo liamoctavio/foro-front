@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-profile',
@@ -20,39 +21,20 @@ export class ProfileComponent implements OnInit {
   submitted = false;
   success = '';
   error = '';
-  user: any = null;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private usuarioService: UsuarioService
+  ) {}
 
   ngOnInit(): void {
-    const userData = localStorage.getItem('loggedUser');
-    if (!userData) {
-      this.error = 'No hay sesión activa.';
-      return;
-    }
+    const stored = localStorage.getItem('loggedUser');
+    const user = stored ? JSON.parse(stored) : null;
 
-    this.user = JSON.parse(userData);
-    this.profileForm = this.fb.group(
-      {
-        name: [this.user.name, Validators.required],
-        password: [
-          '',
-          [
-            Validators.minLength(8),
-            Validators.maxLength(16),
-            Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/),
-          ],
-        ],
-        confirmPassword: [''],
-      },
-      { validators: this.passwordMatchValidator }
-    );
-  }
-
-  passwordMatchValidator(form: FormGroup) {
-    const pass = form.get('password')!.value;
-    const confirm = form.get('confirmPassword')!.value;
-    return pass && confirm && pass !== confirm ? { mismatch: true } : null;
+    this.profileForm = this.fb.group({
+      nombre: [user?.nombre || '', [Validators.required]],
+      password: ['', [Validators.minLength(6)]],
+    });
   }
 
   onSubmit() {
@@ -62,29 +44,33 @@ export class ProfileComponent implements OnInit {
 
     if (this.profileForm.invalid) return;
 
-    const { name, password } = this.profileForm.value;
+    const form = this.profileForm.value;
+    const data: any = {};
 
-    // Obtener usuarios del localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-    // Buscar al usuario actual
-    const index = users.findIndex((u: any) => u.email === this.user.email);
-    if (index === -1) {
-      this.error = 'Usuario no encontrado.';
-      return;
+    if (form.nombre && form.nombre.trim() !== '') {
+      data.nombre = form.nombre;
     }
 
-    users[index].name = name;
-    if (password) {
-      users[index].password = password;
+    if (form.password && form.password.trim() !== '') {
+      data.password = form.password;
     }
 
-    // Actualizar usuario en localStorage
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('loggedUser', JSON.stringify(users[index]));
+    this.usuarioService.actualizarPerfil(data).subscribe({
+      next: (updatedUser) => {
+        const actual = JSON.parse(localStorage.getItem('loggedUser')!);
+        const nuevo = { ...actual, ...data };
+        localStorage.setItem('loggedUser', JSON.stringify(nuevo));
 
-    this.success = 'Perfil actualizado exitosamente';
-    this.profileForm.reset();
-    this.submitted = false;
+        this.profileForm.patchValue({ nombre: nuevo.nombre });
+        this.profileForm.get('password')!.reset();
+
+        this.success = 'Perfil actualizado correctamente.';
+        this.submitted = false;
+      },
+      error: (err) => {
+        this.error = 'Hubo un error al actualizar el perfil.';
+        console.error('Error al actualizar:', err);
+      },
+    });
   }
 }

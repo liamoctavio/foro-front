@@ -6,7 +6,7 @@
             <label>Categoría</label>
             <select class="form-select" formControlName="categoryId">
                 <option value="">Seleccionar categoría</option>
-                <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+                <option *ngFor="let c of categories" [value]="c.id">{{ c.nombre }}</option>
             </select>
             <div class="text-danger" *ngIf="submitted && threadForm.controls['categoryId'].errors?.['required']">
                 Selecciona una categoría.

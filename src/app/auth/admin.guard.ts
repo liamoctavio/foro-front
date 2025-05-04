@@ -6,7 +6,7 @@ export const adminGuard: CanActivateFn = () => {
   const router = inject(Router);
   const user = JSON.parse(localStorage.getItem('loggedUser') || 'null');
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.rol?.toLowerCase() !== 'admin') {
     router.navigate(['/home'], { queryParams: { msg: 'not-authorized' } });
     return false;
   }
